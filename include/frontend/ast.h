@@ -12,7 +12,14 @@
 typedef enum
 {
   AST_FUNC,
-  AST_ID
+  AST_ID,
+  AST_INTLIT,
+  AST_ADD,
+  AST_SUB,
+  AST_MUL,
+  AST_DIV,
+  AST_RET,
+  AST_GLUE,
 } ast_nodetype_t;
 
 struct ast_node

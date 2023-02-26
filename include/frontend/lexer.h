@@ -16,19 +16,30 @@ typedef enum
   TT_PROC,
   TT_PUB,
   TT_U8,
+  TT_RETURN,
+
+  /* Digit types */
+  TT_INTLIT,
   
   /* Misc */
   TT_ID,          /* Identifier */
   TT_LPAREN,      /* '(' */
   TT_RPAREN,      /* ')' */
+  TT_PLUS,        /* '+' */
   TT_MINUS,       /* '-' */
-  TT_GT,          /* '> */
+  TT_STAR,        /* '*' */
+  TT_SLASH,       /* '/' */
+  TT_GT,          /* '>' */
+  TT_LBRACE,      /* '{' */
+  TT_RBRACE,      /* '}' */
+  TT_SEMI,        /* ';' */ 
 } tokentype_t;
 
 struct token
 {
   size_t line;
   size_t col;
+  ssize_t val_int;
   tokentype_t type;
 };
 

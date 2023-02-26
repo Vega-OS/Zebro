@@ -39,6 +39,7 @@ struct zebro_state
 
   /* Parser specific fields */
   uint8_t pub : 1;
+  uint8_t func_has_ret : 1;
 };
 
 #endif

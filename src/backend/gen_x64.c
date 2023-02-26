@@ -4,8 +4,10 @@
  */
 
 #include <backend/gen_x64.h>
+#include <backend/reg_x64.h>
 #include <frontend/symbol.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 static void prologue(struct zebro_state *state)
 {
@@ -35,17 +37,88 @@ static void func_prologue(struct zebro_state *state, size_t sym_id)
   );
 }
 
+static void func_return(struct zebro_state *state, reg_t r, uint8_t has_val)
+{
+  if (has_val)
+  {
+    fprintf(state->out_fp, "\tmovzx rax, %s\n", g_bregs[r]);
+  }
+
+  fputs("\tleave\n"
+        "\tretq\n\n", state->out_fp);
+}
+
+static void func_epilogue(struct zebro_state *state)
+{
+  if (!state->func_has_ret)
+  {
+    func_return(state, -1, 0);
+  }
+}
 
 reg_t x64_gen(struct zebro_state *state, struct ast_node *node,
               reg_t reg, int parent_ast_top)
 {
-  reg_t leftreg, rightleft;
+  reg_t leftreg, right_reg;
 
   switch (node->op)
   {
     case AST_FUNC:
       func_prologue(state, node->left->id);
-      break;
+
+      if (node->right != NULL)
+      {
+        x64_gen(state, node->right, -1, -1);
+      }
+      
+      func_epilogue(state);
+      state->func_has_ret = 0;
+      return -1;
+    case AST_GLUE:
+      x64_gen(state, node->left, -1, node->op);
+      freeall_regs();
+      x64_gen(state, node->right, -1, node->op);
+      freeall_regs();
+      return -1;
+    case AST_RET:
+      if (node->left == NULL)
+      {
+        func_return(state, -1, 0);
+      }
+      else
+      {
+        reg_t r = x64_gen(state, node->left, -1, -1);
+        func_return(state, r, 1);
+      }
+
+      return -1;
+  }
+
+  if (node->left)
+  {
+    leftreg = x64_gen(state, node->left, -1, -1);
+  }
+
+  if (node->right)
+  {
+    right_reg = x64_gen(state, node->right, -1, -1);
+  }
+
+  switch (node->op)
+  {
+    case AST_ADD:
+      return reg_add(state, leftreg, right_reg);
+    case AST_SUB:
+      return reg_sub(state, leftreg, right_reg);
+    case AST_MUL:
+      return reg_mul(state, leftreg, right_reg);
+    case AST_DIV:
+      return reg_div(state, leftreg, right_reg);
+    case AST_INTLIT:
+      return reg_load(state, node->val_int);
+    default:
+      printf("INTERNAL ERROR: Invalid AST operator %d\n", node->op);
+      exit(1);
   }
 }
 

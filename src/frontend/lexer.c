@@ -59,6 +59,28 @@ static char *scanstr(char lexeme, struct zebro_state *state)
   return buf;
 }
 
+
+static int chrpos(const char *s, char lexeme)
+{
+  char* p = strchr(s, lexeme);
+  return p ? p - s : -1;
+}
+
+static uint64_t scanint(struct zebro_state *state, char lexeme) {
+  int k = 0, val = 0;
+
+  while ((k = chrpos("0123456789", lexeme)) >= 0)
+  {
+    val = val * 10 + k;
+    lexeme = fgetc(state->fp);
+    ++state->col;
+  }
+
+  /* Spare the non integer */
+  state->putback = lexeme;
+  return val;
+}
+
 static void checkstr(char *str, struct zebro_state *state,
                      struct token *token_out)
 {
@@ -77,6 +99,10 @@ static void checkstr(char *str, struct zebro_state *state,
   else if (strcmp(str, "u8") == 0)
   {
     token_out->type = TT_U8;
+  }
+  else if (strcmp(str, "return") == 0)
+  {
+    token_out->type = TT_RETURN;
   }
   else
   {
@@ -101,6 +127,15 @@ static void check_lexeme(struct token *token_out, struct zebro_state *state,
     case '>':
       token_out->type = TT_GT;
       break;
+    case '{':
+      token_out->type = TT_LBRACE;
+      break;
+    case '}':
+      token_out->type = TT_RBRACE;
+      break;
+    case ';':
+      token_out->type = TT_SEMI;
+      break;
     default:
       if (IS_LETTER(lexeme) || lexeme == '_')
       {
@@ -116,6 +151,12 @@ static void check_lexeme(struct token *token_out, struct zebro_state *state,
           state->last_str = str;
         }
 
+        break;
+      }
+      else if (IS_DIGIT(lexeme))
+      {
+        token_out->type = TT_INTLIT;
+        token_out->val_int = scanint(state, lexeme);
         break;
       }
 
