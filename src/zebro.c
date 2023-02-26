@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <util.h>
 #include <state.h>
+#include <frontend/ast.h>
 #include <frontend/symbol.h>
 #include <frontend/parser.h>
 #include <sysdeps/mem.h>
@@ -68,6 +69,7 @@ static void handle_args(struct zebro_state *state, int argc, char **argv)
 void zebro_cleanup(struct zebro_state *state)
 {
   symtbl_cleanup(state);
+  ast_cleanup_nodes();
 }
 
 int main(int argc, char **argv)
