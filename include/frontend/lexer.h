@@ -14,7 +14,15 @@ typedef enum
 {
   /* Reserved keywords */
   TT_PROC,
-  TT_PUB
+  TT_PUB,
+  TT_U8,
+  
+  /* Misc */
+  TT_ID,          /* Identifier */
+  TT_LPAREN,      /* '(' */
+  TT_RPAREN,      /* ')' */
+  TT_MINUS,       /* '-' */
+  TT_GT,          /* '> */
 } tokentype_t;
 
 struct token

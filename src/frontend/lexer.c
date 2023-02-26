@@ -10,22 +10,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define IS_LETTER(ch) \
-  ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z'))
+#define IS_LETTER(lexeme) \
+  ((lexeme >= 'a' && lexeme <= 'z') || (lexeme >= 'A' && lexeme <= 'Z'))
 
-#define SHOULD_SKIP(ch) \
-  (ch == '\r' || ch == '\n' || ch == '\f' || ch == ' ')
+#define IS_DIGIT(lexeme) \
+  (lexeme >= '0' && lexeme <= '9')
 
-static char *scanstr(char ch, struct zebro_state *state)
+#define SHOULD_SKIP(lexeme) \
+  (lexeme == '\r' || lexeme == '\n' || lexeme == '\f' || lexeme == ' ')
+
+static char *scanstr(char lexeme, struct zebro_state *state)
 {
   char *buf = zebro_malloc(sizeof(char));
-
-  if (buf == NULL)
+  if (buf == NULL)      /* Ensure allocation was a success */
   {
-    printf("ZEBRO INTERNAL ERROR: Could not allocate memory in %s:%s\n",
+    printf("INTERNAL ERROR: Could not allocate memory in %s:%s\n", 
            __FILE__, __func__
     );
-
     exit(1);
   }
 
@@ -34,18 +35,26 @@ static char *scanstr(char ch, struct zebro_state *state)
 
   while (1)
   {
-    buf[buf_idx++] = ch;
+    buf[buf_idx++] = lexeme;
     buf = zebro_realloc(buf, sizeof(char) * (buf_idx + 1));
-    ch = fgetc(state->fp);
+    lexeme = fgetc(state->fp);
     
-    if (!IS_LETTER(ch) && ch != '_')
+    /*
+     *  The reason why we can accept digits
+     *  is because an identifier can be like
+     *  the following:
+     *
+     *  test123
+     */
+    if (!IS_LETTER(lexeme) && lexeme != '_' && !IS_DIGIT(lexeme))
     {
+      state->putback = lexeme;    /* Use this lexeme later */
       break;
     }
 
     ++state->col;
   }
-
+  
   buf[buf_idx++] = '\0';
   return buf;
 }
@@ -65,39 +74,72 @@ static void checkstr(char *str, struct zebro_state *state,
   {
     token_out->type = TT_PROC;
   }
+  else if (strcmp(str, "u8") == 0)
+  {
+    token_out->type = TT_U8;
+  }
   else
   {
-    diag_err(state, "Unrecognized keyword \"%s\" found while scanning\n", str);
-    zebro_free(str);
+    token_out->type = TT_ID;
+  }
+}
+
+static void check_lexeme(struct token *token_out, struct zebro_state *state,
+                         char lexeme)
+{
+  switch (lexeme)
+  {
+    case '(':
+      token_out->type = TT_LPAREN;
+      break;
+    case ')':
+      token_out->type = TT_RPAREN;
+      break;
+    case '-':
+      token_out->type = TT_MINUS;
+      break;
+    case '>':
+      token_out->type = TT_GT;
+      break;
+    default:
+      if (IS_LETTER(lexeme) || lexeme == '_')
+      {
+        char *str = scanstr(lexeme, state);
+        checkstr(str, state, token_out);
+        zebro_free(str);
+        break;
+      }
+
+    diag_err(state, "Unrecognized token '%c' found while scanning\n", lexeme);
     exit(1);
   }
 }
 
 uint8_t scan(struct zebro_state *state, struct token *token_out)
 {
-  char ch = fgetc(state->fp);
-  while (SHOULD_SKIP(ch) && ch != EOF)
-  {
-    ch = fgetc(state->fp);
-  }
-
-  if (ch == EOF)
-  {
-    return 0;
-  }
+  char lexeme;
   
-  if (IS_LETTER(ch))    // Assume keyword for now if lexeme is a letter.
+  if (state->putback != '\0')
   {
-    char *str = scanstr(ch, state);
-    checkstr(str, state, token_out);
-    zebro_free(str);
+    /* Use a a lexeme that was saved for later */
+    lexeme = state->putback;
+    state->putback = '\0';
   }
   else
   {
-    diag_err(state, "Unrecognized token '%c' found while scanning\n", ch);
-    exit(1);
+    lexeme = fgetc(state->fp);
   }
 
+  while (SHOULD_SKIP(lexeme) && lexeme != EOF) 
+  {
+    lexeme = fgetc(state->fp);
+  }
+
+  if (lexeme == EOF)
+  {
+    return 0;
+  } 
+  
   ++state->col;
   return 1;
 }

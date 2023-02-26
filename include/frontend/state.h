@@ -22,6 +22,12 @@ struct zebro_state
   FILE *fp;
   size_t line;
   size_t col;
+
+  /* Lexer specific fields */
+  char putback;
+
+  /* Parser specific fields */
+  uint8_t pub : 1;            /* If next symbol is to be public */
 };
 
 #endif

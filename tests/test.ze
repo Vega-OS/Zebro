@@ -1,4 +1,1 @@
-pub proc main() -> int
-{
-  return 0;
-}
+pub proc main() -> u8

@@ -71,6 +71,7 @@ int main(int argc, char **argv)
 
   struct zebro_state state = {0};
   state.line = 1;
+  state.col = 1;
 
   handle_args(&state, argc, argv); 
   return 0;
