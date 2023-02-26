@@ -48,3 +48,17 @@ void symtbl_cleanup(struct zebro_state *state)
   state->symtbl = NULL;
   state->symtbl_size = 0;
 }
+
+
+uint8_t is_defined(struct zebro_state *state, const char *name)
+{
+  for (size_t i = 0; i < state->symtbl_size; ++i)
+  {
+    if (strcmp(state->symtbl[i].name, name) == 0)
+    {
+      return 1;
+    }
+  }
+
+  return 0;
+}

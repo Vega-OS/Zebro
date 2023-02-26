@@ -57,7 +57,13 @@ static struct ast_node *handle_proc(struct zebro_state *state)
   scan(state, &last_token); /* Assume we are still on `proc` and skip it */
   passert(state, TT_ID, "<identifier> after `proc`");
 
-  char* ident = state->last_str;
+  char *ident = state->last_str;
+
+  if (is_defined(state, ident))
+  {
+    diag_err(state, "Redefinition of \"%s\"\n", ident);
+    exit(1);
+  }
   
   scan(state, &last_token);
   passert(state, TT_LPAREN, "'(' after <identifier>");

@@ -44,6 +44,9 @@ struct symbol
 size_t symtbl_push(struct zebro_state *state, const char *name,
                    sym_stype_t stype, sym_ptype_t ptype, sym_linkage_t linkage);
 
+uint8_t is_defined(struct zebro_state *state, const char *name);
+
+
 void symtbl_cleanup(struct zebro_state *state);
 
 #endif
