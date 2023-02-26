@@ -139,6 +139,8 @@ uint8_t scan(struct zebro_state *state, struct token *token_out)
   {
     return 0;
   } 
+
+  check_lexeme(token_out, state, lexeme);
   
   ++state->col;
   return 1;
