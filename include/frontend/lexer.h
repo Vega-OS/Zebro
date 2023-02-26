@@ -6,7 +6,7 @@
 #ifndef LEXER_H
 #define LEXER_H
 
-#include <frontend/state.h>
+#include <state.h>
 #include <stdint.h>
 #include <stddef.h>
 

@@ -7,7 +7,7 @@
 #include <version.h>
 #include <string.h>
 #include <stdlib.h>
-#include <frontend/state.h>
+#include <state.h>
 #include <frontend/parser.h>
 #include <sysdeps/mem.h>
 
