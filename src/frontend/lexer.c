@@ -141,7 +141,12 @@ uint8_t scan(struct zebro_state *state, struct token *token_out)
 
   while (SHOULD_SKIP(lexeme) && lexeme != EOF) 
   {
-    lexeme = fgetc(state->fp);
+    if (lexeme == '\n')
+    {
+      ++state->line;
+    }
+
+    lexeme = fgetc(state->fp); 
   }
 
   if (lexeme == EOF)
