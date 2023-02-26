@@ -256,6 +256,10 @@ static struct ast_node *check_token(struct zebro_state *state)
       return handle_proc(state);
     }
   }
+  else if (last_token.type == TT_PROC)
+  {
+    handle_proc(state);
+  }
 }
 
 void parse(struct zebro_state *state)
