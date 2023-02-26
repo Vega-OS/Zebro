@@ -1,4 +1,9 @@
+pub proc test() -> u8
+{
+  return 0;
+}
+
 pub proc main() -> u8
 {
-  return 1;
+  return 0;
 }
