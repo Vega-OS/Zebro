@@ -6,7 +6,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include <state.h>
+#include <frontend/state.h>
 
 void parse(struct zebro_state *state);
 

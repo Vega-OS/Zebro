@@ -3,12 +3,12 @@
  *  @author: Ian Marco Moffett.
  */
 
-#include <lexer.h>
+#include <frontend/lexer.h>
+#include <sysdeps/mem.h>
 #include <stdio.h>
 #include <diag.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sysdeps/mem.h>
 
 #define IS_LETTER(ch) \
   ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z'))

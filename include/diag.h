@@ -6,7 +6,7 @@
 #ifndef DIAG_H
 #define DIAG_H
 
-#include <state.h>
+#include <frontend/state.h>
 #include <stdarg.h>
 
 void diag_err(struct zebro_state *state, const char *fmt, ...);

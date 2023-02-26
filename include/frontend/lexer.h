@@ -6,9 +6,9 @@
 #ifndef LEXER_H
 #define LEXER_H
 
+#include <frontend/state.h>
 #include <stdint.h>
 #include <stddef.h>
-#include <state.h>
 
 typedef enum
 {

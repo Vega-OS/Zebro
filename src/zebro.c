@@ -7,8 +7,8 @@
 #include <version.h>
 #include <string.h>
 #include <stdlib.h>
-#include <state.h>
-#include <parser.h>
+#include <frontend/state.h>
+#include <frontend/parser.h>
 #include <sysdeps/mem.h>
 
 static const char help_msg[] = {

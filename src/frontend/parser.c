@@ -3,8 +3,8 @@
  *  @author: Ian Marco Moffett.
  */
 
-#include <parser.h>
-#include <lexer.h>
+#include <frontend/parser.h>
+#include <frontend/lexer.h>
 
 static struct token last_token;
 
