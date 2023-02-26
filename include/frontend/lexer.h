@@ -38,5 +38,6 @@ struct token
  */
 
 uint8_t scan(struct zebro_state *state, struct token *token_out);
+void lexer_destroy_laststr(struct zebro_state *state);
 
 #endif

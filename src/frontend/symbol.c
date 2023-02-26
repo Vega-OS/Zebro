@@ -8,8 +8,8 @@
 #include <string.h>
 
 
-void symtbl_push(struct zebro_state *state, const char *name,
-                 sym_stype_t stype, sym_ptype_t ptype, sym_linkage_t linkage)
+size_t symtbl_push(struct zebro_state *state, const char *name,
+                   sym_stype_t stype, sym_ptype_t ptype, sym_linkage_t linkage)
 {
   if (state->symtbl == NULL)
   {
@@ -21,6 +21,14 @@ void symtbl_push(struct zebro_state *state, const char *name,
   state->symtbl[state->symtbl_size].ptype = ptype;
   state->symtbl[state->symtbl_size].stype = stype;
   state->symtbl[state->symtbl_size].linkage = linkage;
+  
+  size_t newsize = sizeof(struct symbol) * (state->symtbl_size + 1);
+  state->symtbl = zebro_realloc(state->symtbl, newsize);
+
+  size_t ret = state->symtbl_size;
+  ++state->symtbl_size;
+
+  return ret;
 }
 
 

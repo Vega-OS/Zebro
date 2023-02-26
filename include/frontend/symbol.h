@@ -7,6 +7,7 @@
 #define SYMBOL_H
 
 #include <state.h>
+#include <stddef.h>
 
 /*
  *  Structural types.
@@ -40,8 +41,8 @@ struct symbol
   sym_linkage_t linkage;
 };
 
-void symtbl_push(struct zebro_state *state, const char *name,
-                 sym_stype_t stype, sym_ptype_t ptype, sym_linkage_t linkage);
+size_t symtbl_push(struct zebro_state *state, const char *name,
+                   sym_stype_t stype, sym_ptype_t ptype, sym_linkage_t linkage);
 
 void symtbl_cleanup(struct zebro_state *state);
 

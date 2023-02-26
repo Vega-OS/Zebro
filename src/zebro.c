@@ -7,6 +7,7 @@
 #include <version.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <util.h>
 #include <state.h>
 #include <frontend/ast.h>
@@ -27,20 +28,35 @@ static inline void help(void)
 
 static void compile(struct zebro_state *state, const char *filename)
 {
+  extern const char* __progname;
   state->fp = fopen(filename, "r");
   state->current_filename = filename;
+  
+  /* Create a temp file for the assembly to go */
+  state->out_fp = fopen("zebro-out.asm", "w");
 
   if (state->fp == NULL)
   {
-    extern const char* __progname;
     printf("%s: \033[0;31merror: \033[39mFailed to open \"%s\"\n",
            __progname, filename
     );
     exit(1);
   }
+
+  if (state->out_fp == NULL)
+  {
+    printf("%s: \033[0;31merror: \033[39mFailed to open "
+           "/tmp/zebro-out.asm\n", __progname
+    );
+    
+    perror("fopen");
+    exit(1);
+  }
   
   parse(state);
   fclose(state->fp);
+
+  fclose(state->out_fp);
 
   zebro_cleanup(state);
   memset(state, 0, sizeof(struct zebro_state));  /* Reset all state */

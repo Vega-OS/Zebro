@@ -106,7 +106,16 @@ static void check_lexeme(struct token *token_out, struct zebro_state *state,
       {
         char *str = scanstr(lexeme, state);
         checkstr(str, state, token_out);
-        zebro_free(str);
+
+        if (token_out->type != TT_ID)
+        {
+          zebro_free(str);
+        }
+        else
+        {
+          state->last_str = str;
+        }
+
         break;
       }
 
@@ -144,4 +153,14 @@ uint8_t scan(struct zebro_state *state, struct token *token_out)
   
   ++state->col;
   return 1;
+}
+
+
+void lexer_destroy_laststr(struct zebro_state *state)
+{
+  if (state->last_str != NULL)
+  {
+    zebro_free(state->last_str);
+    state->last_str = NULL;
+  }
 }
