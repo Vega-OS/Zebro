@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
+
 /*
  *  @current_filename: Current file of file being compiled.
  *  @fp: File pointer.
@@ -22,6 +23,9 @@ struct zebro_state
   FILE *fp;
   size_t line;
   size_t col;
+
+  struct symbol *symtbl;
+  size_t symtbl_size;       /* In entries */
 
   /* Lexer specific fields */
   char putback;

@@ -7,7 +7,9 @@
 #include <version.h>
 #include <string.h>
 #include <stdlib.h>
+#include <util.h>
 #include <state.h>
+#include <frontend/symbol.h>
 #include <frontend/parser.h>
 #include <sysdeps/mem.h>
 
@@ -38,7 +40,9 @@ static void compile(struct zebro_state *state, const char *filename)
   
   parse(state);
   fclose(state->fp);
-  memset(state, 0, sizeof(struct zebro_state));  // Reset all state.
+
+  zebro_cleanup(state);
+  memset(state, 0, sizeof(struct zebro_state));  /* Reset all state */
 }
 
 static void handle_args(struct zebro_state *state, int argc, char **argv)
@@ -60,6 +64,12 @@ static void handle_args(struct zebro_state *state, int argc, char **argv)
   }
 }
 
+
+void zebro_cleanup(struct zebro_state *state)
+{
+  symtbl_cleanup(state);
+}
+
 int main(int argc, char **argv)
 {
   if (argc < 2)
@@ -72,7 +82,7 @@ int main(int argc, char **argv)
   struct zebro_state state = {0};
   state.line = 1;
   state.col = 1;
-
+  
   handle_args(&state, argc, argv); 
   return 0;
 }
