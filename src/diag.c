@@ -8,7 +8,7 @@
 
 static void diag_common(struct zebro_state *state, const char *fmt, va_list args) {
   vprintf(fmt, args);
-  printf("%s:%lld:%lld\n", state->current_filename, state->line, state->col);
+  printf("%s:%ld:%ld\n", state->current_filename, state->line, state->col);
 }
 
 
