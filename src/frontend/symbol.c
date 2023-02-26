@@ -20,15 +20,12 @@ size_t symtbl_push(struct zebro_state *state, const char *name,
   state->symtbl[state->symtbl_size].stype = stype;
   state->symtbl[state->symtbl_size].ptype = ptype;
   state->symtbl[state->symtbl_size].stype = stype;
-  state->symtbl[state->symtbl_size].linkage = linkage;
+  state->symtbl[state->symtbl_size++].linkage = linkage;
   
   size_t newsize = sizeof(struct symbol) * (state->symtbl_size + 1);
   state->symtbl = zebro_realloc(state->symtbl, newsize);
 
-  size_t ret = state->symtbl_size;
-  ++state->symtbl_size;
-
-  return ret;
+  return state->symtbl_size - 1;
 }
 
 
