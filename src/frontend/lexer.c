@@ -185,6 +185,7 @@ uint8_t scan(struct zebro_state *state, struct token *token_out)
     if (lexeme == '\n')
     {
       ++state->line;
+      state->col = 1;
     }
 
     lexeme = fgetc(state->fp); 
